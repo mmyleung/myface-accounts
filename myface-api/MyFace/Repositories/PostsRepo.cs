@@ -17,6 +17,7 @@ namespace MyFace.Repositories
         Post Create(CreatePostRequest post);
         Post Update(int id, UpdatePostRequest update);
         void Delete(int id);
+        int GetUserIdByPost(int postId);
     }
     
     public class PostsRepo : IPostsRepo
@@ -104,6 +105,12 @@ namespace MyFace.Repositories
             var post = GetById(id);
             _context.Posts.Remove(post);
             _context.SaveChanges();
+        }
+
+        public int GetUserIdByPost(int postId)
+        {
+            var post = GetById(postId);
+            return post.UserId;
         }
     }
 }

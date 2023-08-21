@@ -34,6 +34,7 @@ namespace MyFace.Controllers
         [HttpPost("create")]
         public IActionResult Create([FromBody] CreateUserRequest newUser)
         {
+            
             if (!ModelState.IsValid)
             {
                 return BadRequest(ModelState);

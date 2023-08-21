@@ -29,7 +29,7 @@ namespace MyFace.Helpers
             return salt;
         }
 
-        private string getHashedPassword(string password, byte[] salt)
+        public string getHashedPassword(string password, byte[] salt)
         {
             // derive a 256-bit subkey (use HMACSHA256 with 100,000 iterations)
             string hashed = Convert.ToBase64String(KeyDerivation.Pbkdf2(

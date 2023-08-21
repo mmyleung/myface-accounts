@@ -2,6 +2,7 @@
 using MyFace.Models.Request;
 using MyFace.Models.Response;
 using MyFace.Repositories;
+using MyFace.Helpers;
 
 namespace MyFace.Controllers
 {
@@ -10,10 +11,12 @@ namespace MyFace.Controllers
     public class PostsController : ControllerBase
     {    
         private readonly IPostsRepo _posts;
+        private readonly  IUsersRepo _usersRepo;
 
-        public PostsController(IPostsRepo posts)
+        public PostsController(IPostsRepo posts, IUsersRepo usersRepo)
         {
             _posts = posts;
+            _usersRepo = usersRepo;
         }
         
         [HttpGet("")]
@@ -33,7 +36,17 @@ namespace MyFace.Controllers
 
         [HttpPost("create")]
         public IActionResult Create([FromBody] CreatePostRequest newPost)
-        {
+        {   
+            var hasAuth = Request.Headers.TryGetValue("Authorization", out var authHeader);
+            if(!hasAuth)
+            {
+                return Unauthorized();
+            }
+            var authHelper = new AuthHelper(authHeader.ToString(), newPost.UserId, _usersRepo);
+            if (!authHelper.IsAuthenticated)
+            {
+                return Unauthorized();
+            }
             if (!ModelState.IsValid)
             {
                 return BadRequest(ModelState);
@@ -49,6 +62,16 @@ namespace MyFace.Controllers
         [HttpPatch("{id}/update")]
         public ActionResult<PostResponse> Update([FromRoute] int id, [FromBody] UpdatePostRequest update)
         {
+            var hasAuth = Request.Headers.TryGetValue("Authorization", out var authHeader);
+            if(!hasAuth)
+            {
+                return Unauthorized();
+            }
+            var authHelper = new AuthHelper(authHeader.ToString(), _posts.GetUserIdByPost(id), _usersRepo);
+            if (!authHelper.IsAuthenticated)
+            {
+                return Unauthorized();
+            }
             if (!ModelState.IsValid)
             {
                 return BadRequest(ModelState);
