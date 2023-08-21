@@ -12,7 +12,7 @@ namespace MyFace.Models.Database
         public string Email { get; set; }
 
         public string HashedPassword { get; set; }
-        public string Salt { get; set; }
+        public byte[] Salt { get; set; }
         public string ProfileImageUrl { get; set; }
         public string CoverImageUrl { get; set; }
         public ICollection<Post> Posts { get; set; } = new List<Post>();
