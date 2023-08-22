@@ -3,6 +3,7 @@ using System.Linq;
 using MyFace.Models.Database;
 using MyFace.Models.Request;
 using MyFace.Helpers;
+using System;
 
 namespace MyFace.Repositories
 {
@@ -62,7 +63,7 @@ namespace MyFace.Repositories
         public User GetByUsername(string username)
         {
             return _context.Users
-                .Single(user => user.Username == username);
+                .SingleOrDefault(user => user.Username == username);
         }
 
         public User Create(CreateUserRequest newUser)

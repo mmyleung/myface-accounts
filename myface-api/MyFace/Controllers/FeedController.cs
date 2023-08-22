@@ -3,6 +3,7 @@ using MyFace.Models.Request;
 using MyFace.Models.Response;
 using MyFace.Repositories;
 using MyFace.Helpers;
+using System;
 
 namespace MyFace.Controllers
 {
@@ -13,9 +14,10 @@ namespace MyFace.Controllers
         private readonly IPostsRepo _posts;
         private readonly IUsersRepo _usersRepo;
 
-        public FeedController(IPostsRepo posts)
+        public FeedController(IPostsRepo posts, IUsersRepo usersRepo)
         {
             _posts = posts;
+            _usersRepo = usersRepo;
         }
 
         [HttpGet("")]

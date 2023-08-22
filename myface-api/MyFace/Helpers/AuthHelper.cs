@@ -11,7 +11,6 @@ namespace MyFace.Helpers
     {
         public string DecodedString { get; set; }
         public bool IsAuthenticated { get; set; }
-        public UsersRepo usersRepo{ get; set; }
 
         public AuthHelper(string encodedString, IUsersRepo usersRepo)
         {
@@ -22,7 +21,7 @@ namespace MyFace.Helpers
             var user = usersRepo.GetByUsername(authParts[0]);
             var passwordHelper = new PasswordHelper(authParts[1]);
 
-            if (passwordHelper.getHashedPassword(authParts[1], user.Salt) == user.HashedPassword)
+            if (user != null && passwordHelper.getHashedPassword(authParts[1], user.Salt) == user.HashedPassword)
             {
                 IsAuthenticated = true;
             } else {

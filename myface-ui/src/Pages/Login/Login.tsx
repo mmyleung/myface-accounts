@@ -1,17 +1,28 @@
-﻿import React, {FormEvent, useContext, useState} from 'react';
+﻿import React, {FormEvent, useContext, useEffect, useState} from 'react';
 import {Page} from "../Page/Page";
 import {LoginContext} from "../../Components/LoginManager/LoginManager";
 import "./Login.scss";
+import { useHistory } from 'react-router-dom';
 
 export function Login(): JSX.Element {
     const loginContext = useContext(LoginContext);
+    const history = useHistory();
     
     const [username, setUsername] = useState("");
     const [password, setPassword] = useState("");
+
+    useEffect(()=>{
+        console.log(loginContext);
+        if(loginContext.isLoggedIn){
+            history.push("/")
+        }
+    }, [loginContext.isLoggedIn])
     
     function tryLogin(event: FormEvent) {
         event.preventDefault();
-        loginContext.logIn();
+        loginContext.logIn(username, password);
+        console.log("Completed login");
+        
     }
     
     return (
