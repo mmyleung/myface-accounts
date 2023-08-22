@@ -72,7 +72,8 @@ namespace MyFace.Controllers
                 return BadRequest(ModelState);
             }
             
-            var post = _posts.Create(newPost);
+            var userId = _usersRepo.GetByUsername(newPost.Username).Id;
+            var post = _posts.Create(newPost, userId);
 
             var url = Url.Action("GetById", new { id = post.Id });
             var postResponse = new PostResponse(post);
@@ -101,7 +102,7 @@ namespace MyFace.Controllers
             return new PostResponse(post);
         }
 
-        [HttpDelete("{id}")]
+        [HttpDelete("{id}/delete")]
         public IActionResult Delete([FromRoute] int id)
         {
             var hasAuth = Request.Headers.TryGetValue("Authorization", out var authHeader);
@@ -111,6 +112,10 @@ namespace MyFace.Controllers
             }
             var authHelper = new AuthHelper(authHeader.ToString(), _usersRepo);
             if (!authHelper.IsAuthenticated)
+            {
+                return Unauthorized();
+            }
+            if (!authHelper.IsAdmin)
             {
                 return Unauthorized();
             }

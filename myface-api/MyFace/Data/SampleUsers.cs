@@ -110,7 +110,8 @@ namespace MyFace.Data
             new List<string> { "Stafford", "Deport", "sdeport2o", "sdeport2o@wix.com" },
             new List<string> { "Zacharie", "Perchard", "zperchard2p", "zperchard2p@qq.com" },
             new List<string> { "Jane", "Iceton", "jiceton2q", "jiceton2q@lulu.com" },
-            new List<string> { "Marjy", "Beadell", "mbeadell2r", "mbeadell2r@delicious.com" }
+            new List<string> { "Marjy", "Beadell", "mbeadell2r", "mbeadell2r@delicious.com" },
+            new List<string> { "My", "Face", "myface", "myface@myface.com" }
         };
         
         public static IEnumerable<User> GetUsers()
@@ -131,6 +132,7 @@ namespace MyFace.Data
                 CoverImageUrl = ImageGenerator.GetCoverImage(index),
                 Salt = passwordHelper.Salt,
                 HashedPassword = passwordHelper.HashedPassword,
+                Type = UserType.MEMBER,
             };
         }
     }

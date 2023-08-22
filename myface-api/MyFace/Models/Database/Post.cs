@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using MyFace.Repositories;
 
 namespace MyFace.Models.Database
 {
@@ -12,5 +13,10 @@ namespace MyFace.Models.Database
         public int UserId { get; set; }
         public User User { get; set; }
         public ICollection<Interaction> Interactions { get; set; } = new List<Interaction>();
+
+        public int getUserId(string username, IUsersRepo usersRepo)
+        {
+            return User.Id = usersRepo.GetByUsername(username).Id;
+        }
     }
 }

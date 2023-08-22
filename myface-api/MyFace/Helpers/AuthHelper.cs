@@ -11,6 +11,7 @@ namespace MyFace.Helpers
     {
         public string DecodedString { get; set; }
         public bool IsAuthenticated { get; set; }
+        public bool IsAdmin { get; set; }
 
         public AuthHelper(string encodedString, IUsersRepo usersRepo)
         {
@@ -24,9 +25,16 @@ namespace MyFace.Helpers
             if (user != null && passwordHelper.getHashedPassword(authParts[1], user.Salt) == user.HashedPassword)
             {
                 IsAuthenticated = true;
+                if (user.Type == UserType.ADMIN)
+                {
+                    IsAdmin = true;
+                } else {
+                    IsAdmin = false;
+                }
             } else {
                 IsAuthenticated = false;
             };
         }
+
     }
 }
