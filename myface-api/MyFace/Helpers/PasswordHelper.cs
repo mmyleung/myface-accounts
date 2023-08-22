@@ -25,7 +25,6 @@ namespace MyFace.Helpers
             {
                 rngCsp.GetNonZeroBytes(salt);
             }
-            Console.WriteLine($"Salt: {Convert.ToBase64String(salt)}");
             return salt;
         }
 
@@ -38,7 +37,6 @@ namespace MyFace.Helpers
                 prf: KeyDerivationPrf.HMACSHA256,
                 iterationCount: 100000,
                 numBytesRequested: 256 / 8));
-            Console.WriteLine($"Hashed: {hashed}");
             return hashed;
         }
 

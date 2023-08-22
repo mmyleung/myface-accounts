@@ -2,6 +2,7 @@
 using MyFace.Models.Request;
 using MyFace.Models.Response;
 using MyFace.Repositories;
+using MyFace.Helpers;
 
 namespace MyFace.Controllers
 {
@@ -10,6 +11,7 @@ namespace MyFace.Controllers
     public class InteractionsController : ControllerBase
     {
         private readonly IInteractionsRepo _interactions;
+        private readonly IUsersRepo _usersRepo;
 
         public InteractionsController(IInteractionsRepo interactions)
         {
@@ -19,6 +21,16 @@ namespace MyFace.Controllers
         [HttpGet("")]
         public ActionResult<ListResponse<InteractionResponse>> Search([FromQuery] SearchRequest search)
         {
+            var hasAuth = Request.Headers.TryGetValue("Authorization", out var authHeader);
+            if(!hasAuth)
+            {
+                return Unauthorized();
+            }
+            var authHelper = new AuthHelper(authHeader.ToString(), _usersRepo);
+            if (!authHelper.IsAuthenticated)
+            {
+                return Unauthorized();
+            }
             var interactions = _interactions.Search(search);
             var interactionCount = _interactions.Count(search);
             return InteractionListResponse.Create(search, interactions, interactionCount);
@@ -27,6 +39,16 @@ namespace MyFace.Controllers
         [HttpGet("{id}")]
         public ActionResult<InteractionResponse> GetById([FromRoute] int id)
         {
+            var hasAuth = Request.Headers.TryGetValue("Authorization", out var authHeader);
+            if(!hasAuth)
+            {
+                return Unauthorized();
+            }
+            var authHelper = new AuthHelper(authHeader.ToString(), _usersRepo);
+            if (!authHelper.IsAuthenticated)
+            {
+                return Unauthorized();
+            }
             var interaction = _interactions.GetById(id);
             return new InteractionResponse(interaction);
         }
@@ -34,6 +56,16 @@ namespace MyFace.Controllers
         [HttpPost("create")]
         public IActionResult Create([FromBody] CreateInteractionRequest newUser)
         {
+            var hasAuth = Request.Headers.TryGetValue("Authorization", out var authHeader);
+            if(!hasAuth)
+            {
+                return Unauthorized();
+            }
+            var authHelper = new AuthHelper(authHeader.ToString(), _usersRepo);
+            if (!authHelper.IsAuthenticated)
+            {
+                return Unauthorized();
+            }
             if (!ModelState.IsValid)
             {
                 return BadRequest(ModelState);
@@ -49,6 +81,16 @@ namespace MyFace.Controllers
         [HttpDelete("{id}")]
         public IActionResult Delete([FromRoute] int id)
         {
+            var hasAuth = Request.Headers.TryGetValue("Authorization", out var authHeader);
+            if(!hasAuth)
+            {
+                return Unauthorized();
+            }
+            var authHelper = new AuthHelper(authHeader.ToString(), _usersRepo);
+            if (!authHelper.IsAuthenticated)
+            {
+                return Unauthorized();
+            }
             _interactions.Delete(id);
             return Ok();
         }

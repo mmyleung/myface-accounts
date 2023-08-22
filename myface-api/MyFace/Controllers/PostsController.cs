@@ -22,6 +22,16 @@ namespace MyFace.Controllers
         [HttpGet("")]
         public ActionResult<PostListResponse> Search([FromQuery] PostSearchRequest searchRequest)
         {
+            var hasAuth = Request.Headers.TryGetValue("Authorization", out var authHeader);
+            if(!hasAuth)
+            {
+                return Unauthorized();
+            }
+            var authHelper = new AuthHelper(authHeader.ToString(), _usersRepo);
+            if (!authHelper.IsAuthenticated)
+            {
+                return Unauthorized();
+            }
             var posts = _posts.Search(searchRequest);
             var postCount = _posts.Count(searchRequest);
             return PostListResponse.Create(searchRequest, posts, postCount);
@@ -30,6 +40,16 @@ namespace MyFace.Controllers
         [HttpGet("{id}")]
         public ActionResult<PostResponse> GetById([FromRoute] int id)
         {
+            var hasAuth = Request.Headers.TryGetValue("Authorization", out var authHeader);
+            if(!hasAuth)
+            {
+                return Unauthorized();
+            }
+            var authHelper = new AuthHelper(authHeader.ToString(), _usersRepo);
+            if (!authHelper.IsAuthenticated)
+            {
+                return Unauthorized();
+            }
             var post = _posts.GetById(id);
             return new PostResponse(post);
         }
@@ -42,7 +62,7 @@ namespace MyFace.Controllers
             {
                 return Unauthorized();
             }
-            var authHelper = new AuthHelper(authHeader.ToString(), newPost.UserId, _usersRepo);
+            var authHelper = new AuthHelper(authHeader.ToString(), _usersRepo);
             if (!authHelper.IsAuthenticated)
             {
                 return Unauthorized();
@@ -67,7 +87,7 @@ namespace MyFace.Controllers
             {
                 return Unauthorized();
             }
-            var authHelper = new AuthHelper(authHeader.ToString(), _posts.GetUserIdByPost(id), _usersRepo);
+            var authHelper = new AuthHelper(authHeader.ToString(), _usersRepo);
             if (!authHelper.IsAuthenticated)
             {
                 return Unauthorized();
@@ -84,6 +104,16 @@ namespace MyFace.Controllers
         [HttpDelete("{id}")]
         public IActionResult Delete([FromRoute] int id)
         {
+            var hasAuth = Request.Headers.TryGetValue("Authorization", out var authHeader);
+            if(!hasAuth)
+            {
+                return Unauthorized();
+            }
+            var authHelper = new AuthHelper(authHeader.ToString(), _usersRepo);
+            if (!authHelper.IsAuthenticated)
+            {
+                return Unauthorized();
+            }
             _posts.Delete(id);
             return Ok();
         }

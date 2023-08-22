@@ -13,16 +13,16 @@ namespace MyFace.Helpers
         public bool IsAuthenticated { get; set; }
         public UsersRepo usersRepo{ get; set; }
 
-        public AuthHelper(string encodedString, int id, IUsersRepo usersRepo)
+        public AuthHelper(string encodedString, IUsersRepo usersRepo)
         {
             byte[] data = Convert.FromBase64String(encodedString.Substring(6));
             DecodedString = System.Text.Encoding.UTF8.GetString(data);
-            var user = usersRepo.GetById(id);
+            
             string [] authParts = DecodedString.Split(":");
+            var user = usersRepo.GetByUsername(authParts[0]);
             var passwordHelper = new PasswordHelper(authParts[1]);
 
-            if (authParts[0] == user.Username 
-                && passwordHelper.getHashedPassword(authParts[1], user.Salt) == user.HashedPassword)
+            if (passwordHelper.getHashedPassword(authParts[1], user.Salt) == user.HashedPassword)
             {
                 IsAuthenticated = true;
             } else {

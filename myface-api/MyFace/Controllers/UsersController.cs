@@ -2,6 +2,7 @@
 using MyFace.Models.Request;
 using MyFace.Models.Response;
 using MyFace.Repositories;
+using MyFace.Helpers;
 
 namespace MyFace.Controllers
 {
@@ -19,6 +20,16 @@ namespace MyFace.Controllers
         [HttpGet("")]
         public ActionResult<UserListResponse> Search([FromQuery] UserSearchRequest searchRequest)
         {
+            var hasAuth = Request.Headers.TryGetValue("Authorization", out var authHeader);
+            if(!hasAuth)
+            {
+                return Unauthorized();
+            }
+            var authHelper = new AuthHelper(authHeader.ToString(), _users);
+            if (!authHelper.IsAuthenticated)
+            {
+                return Unauthorized();
+            }
             var users = _users.Search(searchRequest);
             var userCount = _users.Count(searchRequest);
             return UserListResponse.Create(searchRequest, users, userCount);
@@ -27,6 +38,16 @@ namespace MyFace.Controllers
         [HttpGet("{id}")]
         public ActionResult<UserResponse> GetById([FromRoute] int id)
         {
+            var hasAuth = Request.Headers.TryGetValue("Authorization", out var authHeader);
+            if(!hasAuth)
+            {
+                return Unauthorized();
+            }
+            var authHelper = new AuthHelper(authHeader.ToString(), _users);
+            if (!authHelper.IsAuthenticated)
+            {
+                return Unauthorized();
+            }
             var user = _users.GetById(id);
             return new UserResponse(user);
         }
@@ -34,7 +55,17 @@ namespace MyFace.Controllers
         [HttpPost("create")]
         public IActionResult Create([FromBody] CreateUserRequest newUser)
         {
-            
+            var hasAuth = Request.Headers.TryGetValue("Authorization", out var authHeader);
+            if(!hasAuth)
+            {
+                return Unauthorized();
+            }
+            var authHelper = new AuthHelper(authHeader.ToString(), _users);
+            if (!authHelper.IsAuthenticated)
+            {
+                return Unauthorized();
+            }
+
             if (!ModelState.IsValid)
             {
                 return BadRequest(ModelState);
@@ -50,6 +81,17 @@ namespace MyFace.Controllers
         [HttpPatch("{id}/update")]
         public ActionResult<UserResponse> Update([FromRoute] int id, [FromBody] UpdateUserRequest update)
         {
+            var hasAuth = Request.Headers.TryGetValue("Authorization", out var authHeader);
+            if(!hasAuth)
+            {
+                return Unauthorized();
+            }
+            var authHelper = new AuthHelper(authHeader.ToString(), _users);
+            if (!authHelper.IsAuthenticated)
+            {
+                return Unauthorized();
+            }
+
             if (!ModelState.IsValid)
             {
                 return BadRequest(ModelState);
@@ -62,6 +104,17 @@ namespace MyFace.Controllers
         [HttpDelete("{id}")]
         public IActionResult Delete([FromRoute] int id)
         {
+            var hasAuth = Request.Headers.TryGetValue("Authorization", out var authHeader);
+            if(!hasAuth)
+            {
+                return Unauthorized();
+            }
+            var authHelper = new AuthHelper(authHeader.ToString(), _users);
+            if (!authHelper.IsAuthenticated)
+            {
+                return Unauthorized();
+            }
+            
             _users.Delete(id);
             return Ok();
         }
